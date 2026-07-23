@@ -41,7 +41,6 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install langchain langchain-openai langgraph chromadb sentence-transformers ddgs certifi pyinstaller
-          pip install transformers torch huggingface-hub  # sentence-transformers 隐式依赖，PyInstaller 需显式包含
 
       - name: Build with PyInstaller (Windows)
         if: matrix.os == 'windows'
@@ -54,16 +53,20 @@ jobs:
             --add-data "state.py;." `
             --add-data "graph.py;." `
             --add-data "utils.py;." `
+            --exclude-module torchvision `
+            --exclude-module torchaudio `
+            --exclude-module torch.distributed `
+            --exclude-module PIL `
+            --exclude-module matplotlib `
+            --exclude-module scipy `
+            --exclude-module pandas `
             --hidden-import chromadb `
             --hidden-import chromadb.utils.embedding_functions `
             --hidden-import sentence_transformers `
-            --hidden-import sentence_transformers.models `
             --hidden-import langchain_openai `
             --hidden-import langgraph `
             --hidden-import langgraph.checkpoint.memory `
             --hidden-import ddgs `
-            --hidden-import transformers `
-            --hidden-import torch `
             --hidden-import certifi `
             main.py
         shell: pwsh
@@ -79,16 +82,20 @@ jobs:
             --add-data "state.py:." \
             --add-data "graph.py:." \
             --add-data "utils.py:." \
+            --exclude-module torchvision \
+            --exclude-module torchaudio \
+            --exclude-module torch.distributed \
+            --exclude-module PIL \
+            --exclude-module matplotlib \
+            --exclude-module scipy \
+            --exclude-module pandas \
             --hidden-import chromadb \
             --hidden-import chromadb.utils.embedding_functions \
             --hidden-import sentence_transformers \
-            --hidden-import sentence_transformers.models \
             --hidden-import langchain_openai \
             --hidden-import langgraph \
             --hidden-import langgraph.checkpoint.memory \
             --hidden-import ddgs \
-            --hidden-import transformers \
-            --hidden-import torch \
             --hidden-import certifi \
             main.py
 
@@ -122,5 +129,7 @@ jobs:
       - name: Create Release
         uses: softprops/action-gh-release@v2
         with:
-          files: ResearchAgent-*.zip,ResearchAgent-*.tar.gz
+          files: |
+            ResearchAgent-*.zip
+            ResearchAgent-*.tar.gz
           generate_release_notes: true

@@ -204,7 +204,16 @@ def build_cli_parser() -> argparse.ArgumentParser:
 def main():
     """主函数 — 支持命令行参数和交互式两种运行模式"""
     parser = build_cli_parser()
-    args = parser.parse_args()
+
+    # 解析参数，遇未知参数时友好报错而非静默忽略
+    try:
+        args = parser.parse_args()
+    except SystemExit as e:
+        # argparse 在 --help 时正常退出（code=0），其他均为参数错误
+        if e.code != 0:
+            print(f"\n{Colors.RED}命令行参数错误{Colors.RESET}")
+            print(f"  {Colors.DIM}请使用 {Colors.BOLD}python main.py --help{Colors.RESET}{Colors.DIM} 查看可用参数{Colors.RESET}\n")
+        sys.exit(e.code)
 
     # ---- 处理命令行参数 ----
 

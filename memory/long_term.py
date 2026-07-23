@@ -92,7 +92,7 @@ class LongTermMemory:
         score_threshold = score_threshold or RETRIEVAL_SCORE_THRESHOLD
 
         results = self.collection.query(
-            query_texts=[query], # 查询文本，自动转为向量
+            query_texts=[query], # 查询文本，自动转为向量，支持批量查询
             n_results=top_k,
             where={"type": filter_type} if filter_type else None,  # 可选类型过滤
             include=["documents", "metadatas", "distances"] # 返回结果中包含的字段
@@ -100,7 +100,7 @@ class LongTermMemory:
 
         # 把 distance 转换为 similarity（距离越小 → 相似度越高）
         formatted = []
-        if results["documents"] and results["documents"][0]:
+        if results["documents"] and results["documents"][0]: # 批量查询返回的是二维列表，取第一个查询结果
             for i, doc in enumerate(results["documents"][0]):
                 meta = results["metadatas"][0][i] if results["metadatas"] else {}
                 distance = results["distances"][0][i] if results["distances"] else 0

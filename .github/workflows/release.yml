@@ -54,6 +54,9 @@ jobs:
             --exclude-module pandas `
             --hidden-import chromadb `
             --hidden-import chromadb.utils.embedding_functions `
+            --hidden-import chromadb.telemetry `
+            --hidden-import chromadb.telemetry.product `
+            --hidden-import chromadb.telemetry.product.posthog `
             --hidden-import sentence_transformers `
             --hidden-import langchain_openai `
             --hidden-import langgraph `
@@ -82,6 +85,9 @@ jobs:
             --exclude-module pandas \
             --hidden-import chromadb \
             --hidden-import chromadb.utils.embedding_functions \
+            --hidden-import chromadb.telemetry \
+            --hidden-import chromadb.telemetry.product \
+            --hidden-import chromadb.telemetry.product.posthog \
             --hidden-import sentence_transformers \
             --hidden-import langchain_openai \
             --hidden-import langgraph \

@@ -32,10 +32,6 @@ jobs:
             arch: amd64
             runner: windows-latest
             python-version: '3.10'
-          - os: windows
-            arch: arm64
-            runner: windows-11-arm
-            python-version: '3.12'  # Windows ARM 最低支持 3.11
 
     steps:
       - uses: actions/checkout@v4

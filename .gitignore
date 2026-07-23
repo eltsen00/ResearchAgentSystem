@@ -1,0 +1,16 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+
+# ChromaDB 持久化数据
+chroma_db/
+
+# IDE
+.vscode/
+
+# 生成的研究报告
+research_report_*.md
+
+# 环境变量
+.env

@@ -1,0 +1,93 @@
+name: Build & Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build:
+    name: Build ${{ matrix.os }} (${{ matrix.arch }})
+    runs-on: ${{ matrix.runner }}
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu
+            arch: amd64
+            runner: ubuntu-latest
+          - os: ubuntu
+            arch: arm64
+            runner: ubuntu-24.04-arm
+          - os: macos
+            arch: amd64
+            runner: macos-13
+          - os: macos
+            arch: arm64
+            runner: macos-latest
+          - os: windows
+            arch: amd64
+            runner: windows-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install langchain langchain-openai langgraph chromadb sentence-transformers ddgs certifi pyinstaller
+
+      - name: Build with PyInstaller
+        run: |
+          pyinstaller --onedir --name ResearchAgent `
+            --add-data "agents;agents" `
+            --add-data "memory;memory" `
+            --add-data "tools;tools" `
+            --add-data "config.py;." `
+            --add-data "state.py;." `
+            --add-data "graph.py;." `
+            --add-data "utils.py;." `
+            --hidden-import chromadb `
+            --hidden-import sentence_transformers `
+            --hidden-import langchain_openai `
+            --hidden-import langgraph `
+            --hidden-import ddgs `
+            main.py
+        shell: pwsh
+
+      - name: Package (Windows)
+        if: matrix.os == 'windows'
+        run: Compress-Archive -Path dist\ResearchAgent -DestinationPath ResearchAgent-${{ matrix.os }}-${{ matrix.arch }}.zip
+        shell: pwsh
+
+      - name: Package (Unix)
+        if: matrix.os != 'windows'
+        run: cd dist && tar -czf ../ResearchAgent-${{ matrix.os }}-${{ matrix.arch }}.tar.gz ResearchAgent
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ResearchAgent-${{ matrix.os }}-${{ matrix.arch }}
+          path: ResearchAgent-${{ matrix.os }}-${{ matrix.arch }}.*
+
+  release:
+    name: Create Release
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: ResearchAgent-*
+          merge-multiple: true
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: ResearchAgent-*.zip,ResearchAgent-*.tar.gz
+          generate_release_notes: true

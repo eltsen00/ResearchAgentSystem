@@ -40,7 +40,7 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install langchain langchain-openai langgraph chromadb sentence-transformers ddgs certifi pyinstaller
+          pip install langchain langchain-openai langgraph chromadb sentence-transformers ddgs pyinstaller
 
       - name: Build with PyInstaller (Windows)
         if: matrix.os == 'windows'
@@ -67,7 +67,6 @@ jobs:
             --hidden-import langgraph `
             --hidden-import langgraph.checkpoint.memory `
             --hidden-import ddgs `
-            --hidden-import certifi `
             main.py
         shell: pwsh
 
@@ -96,7 +95,6 @@ jobs:
             --hidden-import langgraph \
             --hidden-import langgraph.checkpoint.memory \
             --hidden-import ddgs \
-            --hidden-import certifi \
             main.py
 
       - name: Package (Windows)

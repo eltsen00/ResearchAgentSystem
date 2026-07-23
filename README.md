@@ -29,7 +29,7 @@
 ### 安装依赖
 
 ```bash
-pip install langchain langchain-openai langgraph chromadb sentence-transformers ddgs certifi
+pip install langchain langchain-openai langgraph chromadb sentence-transformers ddgs
 ```
 
 ### 设置 API Key

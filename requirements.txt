@@ -4,4 +4,3 @@ langgraph
 chromadb
 sentence-transformers
 ddgs
-certifi

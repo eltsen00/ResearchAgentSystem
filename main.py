@@ -18,13 +18,6 @@ if sys.platform == "win32":
     except (ValueError, AttributeError, OSError):
         pass  # 非交互终端（如管道、后台运行）可能不支持，静默跳过
 
-# 设置 SSL 证书路径，确保 requests 库在 Windows 上正常工作
-if "SSL_CERT_FILE" in os.environ:
-    try:
-        import certifi
-        os.environ["SSL_CERT_FILE"] = certifi.where()
-    except ImportError:
-        pass
 from datetime import datetime
 
 # 延迟导入：graph/state 依赖 langgraph，仅在 run_research() 中惰性加载，

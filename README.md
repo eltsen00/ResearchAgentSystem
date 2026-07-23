@@ -58,10 +58,10 @@ $env:LLM_LIGHT_MODEL_NAME = "qwen2.5:1.5b"
 
 ```bash
 # 命令行模式
-python main.py -t "量子计算的最新进展"
+python main.py -t "乒乓球运动员早田希娜（Hina Hayata）球风与打法研究"
 
 # 完整参数
-python main.py --topic "AI 发展趋势" --clear-memory --max-rounds 3
+python main.py --topic "乒乓球运动员早田希娜（Hina Hayata）球风与打法研究" --clear-memory --max-rounds 3
 
 # 交互式模式
 python main.py
@@ -184,7 +184,7 @@ ResearchAgentSystem/
 系统会在运行目录生成 Markdown 格式的研究报告：
 
 ```
-research_report_量子计算_20260724_143052.md
+research_report_乒乓球运动员早田希娜（Hina Hayata）球风与打法研究_20260724_143052.md
 ```
 
 报告包含：摘要、引言、研究方法、多角度分析、关键发现、参考文献、研究局限性。

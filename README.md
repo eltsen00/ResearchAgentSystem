@@ -26,13 +26,28 @@
 
 ## 🚀 快速开始
 
+### 前置要求
+
+- Python 3.10+
+- [uv](https://docs.astral.sh/uv/)（Python 包管理器）
+
+```bash
+# 安装 uv（如未安装）
+powershell -c "irm https://astral.sh/uv/install.ps1 | iex"
+```
+
 ### 安装依赖
 
 ```bash
-pip install langchain langchain-openai langgraph chromadb sentence-transformers ddgs
+cd ResearchAgentSystem
+uv sync
 ```
 
+uv 会自动创建 `.venv` 虚拟环境并安装所有依赖，无需手动管理 conda 环境。
+
 ### 设置 API Key
+
+本系统使用兼容 OpenAI 格式的 LLM API，默认对接阿里云 **DashScope**（通义千问）。你也可以换成 OpenAI、Ollama、vLLM 等任何兼容服务。
 
 ```powershell
 # DashScope（通义千问，默认）
@@ -57,20 +72,14 @@ $env:LLM_LIGHT_MODEL_NAME = "qwen2.5:1.5b"
 ### 运行
 
 ```bash
-# 命令行模式
-python main.py -t "乒乓球运动员早田希娜（Hina Hayata）球风与打法研究"
-
-# 完整参数
-python main.py --topic "乒乓球运动员早田希娜（Hina Hayata）球风与打法研究" --clear-memory --max-rounds 3
+# 命令行模式（uv run 自动使用 .venv 中的 Python）
+uv run python main.py "乒乓球运动员早田希娜（Hina Hayata）球风与打法研究"
 
 # 交互式模式
-python main.py
-
-# 查看帮助
-python main.py --help
+uv run python main.py
 ```
 
----
+> 💡 `uv run` 会自动激活虚拟环境，不需要手动 `conda activate`。
 
 ## 🏗️ 系统架构
 
@@ -146,18 +155,17 @@ ResearchAgentSystem/
 
 ---
 
-## 📖 命令行参数
+### 运行
 
-```
-用法: python main.py [选项]
+```bash
+# 命令行模式（uv run 自动使用 .venv 中的 Python）
+uv run python main.py "乒乓球运动员早田希娜（Hina Hayata）球风与打法研究"
 
-  -t, --topic TOPIC     研究主题。不指定则进入交互式输入
-  --clear-memory        启动前清空长期记忆
-  --max-rounds N        最大反思轮次（1-10，默认 4）
-  -q, --quiet           静默模式
-  -v, --verbose         详细输出（默认）
-  -h, --help            帮助信息
+# 交互式模式
+uv run python main.py
 ```
+
+> 💡 `uv run` 会自动激活虚拟环境，不需要手动 `conda activate`。
 
 ---
 

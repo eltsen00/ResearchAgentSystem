@@ -25,4 +25,3 @@ ResearchAgent-*.tar.gz
 
 # uv
 .venv/
-uv.lock

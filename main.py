@@ -6,7 +6,6 @@
 """
 import sys
 import io
-import os
 import time
 import argparse
 
@@ -42,53 +41,62 @@ def run_research(topic: str, max_rounds: int = 2):
     Returns:
         最终状态（包含 final_report），或 None（出错时）
     """
-    # 惰性导入：确保 --help 等纯 CLI 操作不需 langgraph
-    from graph import build_research_graph
-    from state import ResearchState
-    # 构建图
-    if VERBOSE:
-        print_section("🔧 初始化系统")
-    graph = build_research_graph()
-
-    # 设置配置（用于检查点）（checkpointer=memory_saver）
-    config = {"configurable": {"thread_id": f"research_{datetime.now().strftime('%Y%m%d%H%M%S')}"}}
-
-    # 初始化状态
-    initial_state: ResearchState = {
-        "user_query": topic,
-        "messages": [{
-            "role": "System",
-            "content": f"用户查询: {topic}",
-            "timestamp": datetime.now().isoformat()
-        }],
-        "research_plan": [],
-        "search_results": [],
-        "extracted_facts": [],
-        "critique": {},
-        "final_report": "",
-        "current_phase": "orchestrating",
-        "needs_search": True,
-        "needs_revision": False,
-        "reflection_round": 0,
-        "research_complete": False,
-        "current_angle_index": 0,
-        "gap_queries": [],
-        "previous_score": None,
-        "error": None
-    }
-
-    if VERBOSE:
-        print_section(f"🚀 开始研究")
-        print_info("主题", topic)
-        print_info("时间", datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
-
-    # 运行图
-    if VERBOSE:
-        print_section("🔄 执行流程")
-
-    step_count = 0
-
     try:
+        # 惰性导入：确保 --help 等纯 CLI 操作不需 langgraph
+        from graph import build_research_graph
+        from state import ResearchState
+
+        # 提前检查 API Key 是否配置
+        from config import LLM_API_KEY
+        if not LLM_API_KEY:
+            print_error("未配置 LLM_API_KEY 环境变量！")
+            print_info("请设置", "PowerShell: $env:LLM_API_KEY='你的Key'")
+            print_info("或修改", "config.py 中的 LLM_API_KEY 默认值")
+            return None
+
+        # 构建图
+        if VERBOSE:
+            print_section("🔧 初始化系统")
+        graph = build_research_graph()
+
+        # 设置配置（用于检查点）（checkpointer=memory_saver）
+        config = {"configurable": {"thread_id": f"research_{datetime.now().strftime('%Y%m%d%H%M%S')}"}}
+
+        # 初始化状态
+        initial_state: ResearchState = {
+            "user_query": topic,
+            "messages": [{
+                "role": "System",
+                "content": f"用户查询: {topic}",
+                "timestamp": datetime.now().isoformat()
+            }],
+            "research_plan": [],
+            "search_results": [],
+            "extracted_facts": [],
+            "critique": {},
+            "final_report": "",
+            "current_phase": "orchestrating",
+            "needs_search": True,
+            "needs_revision": False,
+            "reflection_round": 0,
+            "research_complete": False,
+            "current_angle_index": 0,
+            "gap_queries": [],
+            "previous_score": None,
+            "error": None
+        }
+
+        if VERBOSE:
+            print_section(f"🚀 开始研究")
+            print_info("主题", topic)
+            print_info("时间", datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+
+        # 运行图
+        if VERBOSE:
+            print_section("🔄 执行流程")
+
+        step_count = 0
+
         for output in graph.stream(initial_state, config):
             # output 只包含当前这一步的变化，不是完整 state
             step_count += 1

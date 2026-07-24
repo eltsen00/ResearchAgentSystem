@@ -2,7 +2,7 @@
 Orchestrator Agent（协调者）— 使用 ToT（Tree of Thoughts）进行任务规划
 """
 import json
-import os
+import sys
 from typing import Dict, Any
 from datetime import datetime
 from langchain_openai import ChatOpenAI
@@ -78,8 +78,10 @@ class OrchestratorAgent:
                     print(f"    - {b['angle']}: {b['question']}")
             return branches[:num_branches]
         except Exception as e:
-            print(f"  [警告] ToT探索失败 ({e})，终止程序")
-            os._exit(1)
+            error_msg = f"ToT探索失败: {e}"
+            print(f"  [错误] {error_msg}")
+            sys.stdout.flush()  # 确保错误消息立即输出
+            raise RuntimeError(error_msg) from e
             
 
     def tot_evaluate(self, topic: str, branches: list) -> list:
